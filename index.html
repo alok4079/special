@@ -3,15 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Birthday 🎂</title>
+<title>Happy Birthday! 🎂</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Playwrite+IT+Moderna:wght@300&family=Indie+Flower&family=Caveat:wght@700&family=Dancing+Script:wght@600&family=Cherry+Bomb+One&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
 :root {
-  --accent: #ffcc00; /* Birthday Gold */
-  --primary: #0077ff; /* Celebration Blue */
-  --bg-gradient: linear-gradient(135deg, #00c6ff, #0072ff);
+  --accent: #FFD700;
+  --primary: #FF3366;
 }
 
 body {
@@ -21,105 +20,92 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: var(--bg-gradient);
+  background: #0f172a; 
   font-family: 'Poppins', sans-serif;
+  transition: background 1.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-#canvas {
+#bg-canvas, #confetti-canvas {
   position: fixed;
   inset: 0;
-  z-index: 1;
   pointer-events: none;
 }
 
+#bg-canvas { z-index: 1; }
+#confetti-canvas { z-index: 2; }
+
 .container, .storyboard {
   position: relative;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 25px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(15px);
+  padding: 30px;
   border-radius: 25px;
   text-align: center;
-  width: 340px;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  width: 320px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.7);
   z-index: 10;
-  border: 4px solid var(--accent);
-  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 5px solid var(--accent);
+  animation: smoothPop 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-@keyframes popIn {
-  from { transform: scale(0.8); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+@keyframes smoothPop {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
-
-h2 { font-size: 22px; color: #333; margin-bottom: 20px; }
 
 .story-img {
   width: 100%;
-  height: 230px;
+  height: 220px;
   object-fit: cover;
   border-radius: 15px;
-  border: 2px solid #eee;
-  margin-bottom: 12px;
+  margin-bottom: 15px;
+  border: 3px solid #f8f8f8;
+  transition: opacity 0.4s ease;
 }
 
 .story-text {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   font-size: 16px;
-  color: #444;
-  min-height: 100px;
-  max-height: 160px;
-  overflow-y: auto;
-  line-height: 1.5;
-  white-space: pre-line;
+  color: #333;
+  min-height: 85px;
+  line-height: 1.6;
 }
 
-.nav-btns { display: flex; gap: 10px; }
+.nav-btns { display: flex; gap: 12px; }
 
 .nav-btns button, #yesBtn, #noBtn {
   flex: 1;
-  padding: 12px 0;
+  padding: 14px 0;
   border: none;
-  border-radius: 25px;
-  font-weight: 600;
+  border-radius: 50px;
+  font-weight: 700;
   cursor: pointer;
-  font-size: 14px;
-  transition: transform 0.2s;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-#yesBtn, .nav-btns button {
-  background: var(--primary);
-  color: white;
-}
-
-#yesBtn:hover, .nav-btns button:hover {
-  transform: translateY(-3px);
-  filter: brightness(1.1);
-}
-
-#noBtn {
-  background: #ff4d4d;
-  color: #fff;
-  position: relative;
-  z-index: 999;
+#yesBtn, #nextBtn { background: var(--primary); color: white; }
+#prevBtn { background: #e2e8f0; color: #475569; }
+#noBtn { 
+  background: #334155; 
+  color: #fff; 
+  position: relative; 
 }
 
 .hidden { display: none !important; }
-
-/* Custom Scrollbar */
-.story-text::-webkit-scrollbar { width: 5px; }
-.story-text::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
 </style>
 </head>
 <body>
 
-<canvas id="canvas"></canvas>
-<audio id="audioPlayer"></audio>
+<canvas id="bg-canvas"></canvas>
+<canvas id="confetti-canvas"></canvas>
+<audio id="bgMusic" loop></audio>
 
 <div class="container" id="page1">
-  <h2>🎉 Hey Birthday Dear🎈<br>Ready to see your highlights birthday moments? ✨</h2>
-  <div style="display:flex; justify-content:center; gap:15px; width: 100%;">
-    <button id="yesBtn" onclick="openStory(event)">LETS GO 🎂</button>
-    <button id="noBtn" onmouseover="moveNo()">Nahhh</button>
+  <h2 id="mainTitle">🎉 Hey Birthday Dear 🎈</h2>
+  <p>Ready for a little birthday surprise? ✨</p>
+  <div style="display:flex; justify-content: center; gap:10px;">
+    <button id="yesBtn" onclick="openStory(event)">YES! 🎂</button>
+    <button id="noBtn" onmouseover="moveNo()" onclick="moveNo()">Nah 🙃</button>
   </div>
 </div>
 
@@ -127,136 +113,181 @@ h2 { font-size: 22px; color: #333; margin-bottom: 20px; }
   <img id="storyImg" class="story-img" src="">
   <div class="story-text" id="storyText"></div>
   <div class="nav-btns">
-    <button id="prevBtn" onclick="prevStory()">⬅ Back</button>
-    <button id="nextBtn" onclick="nextStory(event)">Next ➡</button>
+    <button id="prevBtn" onclick="prevStory()">Back</button>
+    <button id="nextBtn" onclick="nextStory(event)">Next ✨</button>
   </div>
 </div>
 
 <script>
-const stories = [
-  { 
-    img: "mousumi4.jpeg", 
-    song: "SONG_URL_1", 
-    font: "'Playwrite IT Moderna', cursive", 
-    text: "HAPPIEST BIRTHDAY 🎂✨\nToday is all about YOU. Let's take a quick trip down memory lane... starting with this classic 📸" 
-  },
-  { 
-    img: "mousumi1.jpeg", 
-    song: "SONG_URL_2", 
-    font: "'Indie Flower', cursive", 
-    text: "Remember this day? 😂\nYou were looking so good, even though we were being totally chaotic. Never change 🥳" 
-  },
-  { 
-    img: "mousumi3.jpeg", 
-    song: "SONG_URL_3", 
-    font: "'Caveat', cursive", 
-    text: "Another year older, another year of being the most amazing person I know. 🌟\nKeep shining brighter than these candles 🕯️" 
-  },
-  { 
-    img: "mousumi2.jpeg", 
-    song: "SONG_URL_4", 
-    font: "'Cherry Bomb One', cursive", 
-    text: "My favorite photo of us. 💖\nI'm so lucky to celebrate another birthday by your side 🥂" 
-  }
-];
+/* -----------------------------------------------------------
+   IMAGE AND SOUND ADD SECTION
+----------------------------------------------------------- */
+const config = {
+    music: "YOUR_MUSIC_URL_HERE.mp3", 
+    stories: [
+        { 
+            img: "mousumi4.jpeg", 
+            text: "HAPPIEST BIRTHDAY!! 🎂✨\nToday is all about YOU. Let's start the celebration!",
+            emoji: "❤️",
+            bgColor: "#1e1b4b" 
+        },
+        { 
+            img: "mousumi1.jpeg", 
+            text: "Remember this day? 😂\nYou looked so good, even when we were being chaotic!",
+            emoji: "🎂",
+            bgColor: "#4c1d95" 
+        },
+        { 
+            img: "mousumi3.jpeg", 
+            text: "Another year of being the most amazing person I know. 🌟\nKeep shining!",
+            emoji: "🥳",
+            bgColor: "#831843" 
+        },
+        { 
+            img: "mousumi2.jpeg", 
+            text: "My favorite photo! 💖\nI'm so lucky to be by your side today.",
+            emoji: "✨",
+            bgColor: "#064e3b" 
+        }
+    ]
+};
 
+/* -----------------------------------------------------------
+   SMOOTH ANIMATION ENGINE
+----------------------------------------------------------- */
 let index = 0;
-const audio = document.getElementById("audioPlayer");
+let bgParticles = [];
+const bgCanvas = document.getElementById("bg-canvas");
+const bgCtx = bgCanvas.getContext("2d");
+const music = document.getElementById("bgMusic");
 
-function openStory(e) {
-  for(let i=0; i<3; i++) setTimeout(() => celebrate(e.clientX, e.clientY), i*300);
-  document.getElementById("page1").classList.add("hidden");
-  document.getElementById("page2").classList.remove("hidden");
-  loadStory();
+class SmoothEmoji {
+    constructor(emoji) {
+        this.emoji = emoji;
+        this.reset(true);
+    }
+    reset(initial = false) {
+        this.x = Math.random() * bgCanvas.width;
+        this.y = initial ? Math.random() * bgCanvas.height : bgCanvas.height + 100;
+        this.size = Math.random() * 30 + 15;
+        this.speedY = Math.random() * 0.7 + 0.2; 
+        this.oscillationSpeed = Math.random() * 0.015 + 0.005;
+        this.oscillationRadius = Math.random() * 60 + 20;
+        this.angle = Math.random() * Math.PI * 2;
+        this.opacity = 0;
+        this.targetOpacity = Math.random() * 0.4 + 0.1;
+    }
+    update() {
+        this.y -= this.speedY;
+        this.angle += this.oscillationSpeed;
+        this.currentX = this.x + Math.sin(this.angle) * this.oscillationRadius;
+        if (this.opacity < this.targetOpacity) this.opacity += 0.005;
+        if (this.y < -100) this.reset();
+    }
+    draw() {
+        bgCtx.globalAlpha = this.opacity;
+        bgCtx.font = `${this.size}px serif`;
+        bgCtx.fillText(this.emoji, this.currentX, this.y);
+    }
+}
+
+function initBg(emoji) {
+    bgParticles = Array.from({length: 25}, () => new SmoothEmoji(emoji));
 }
 
 function loadStory() {
-  const storyImg = document.getElementById("storyImg");
-  const storyText = document.getElementById("storyText");
-  storyImg.src = stories[index].img;
-  storyText.innerText = stories[index].text;
-  storyText.style.fontFamily = stories[index].font;
-  audio.src = stories[index].song;
-  audio.play().catch(() => {});
-  
-  document.getElementById("prevBtn").style.visibility = index === 0 ? "hidden" : "visible";
-  document.getElementById("nextBtn").innerText = index === stories.length - 1 ? "Celebrate! 🎉" : "Next ➡";
+    const story = config.stories[index];
+    const imgElement = document.getElementById("storyImg");
+    
+    imgElement.style.opacity = 0;
+    setTimeout(() => {
+        imgElement.src = story.img;
+        imgElement.style.opacity = 1;
+    }, 250);
+
+    document.getElementById("storyText").innerText = story.text;
+    document.body.style.backgroundColor = story.bgColor;
+    initBg(story.emoji);
+    
+    document.getElementById("prevBtn").style.visibility = index === 0 ? "hidden" : "visible";
+    document.getElementById("nextBtn").innerText = index === config.stories.length - 1 ? "Finish! 🎉" : "Next ✨";
+}
+
+function openStory(e) {
+    music.src = config.music;
+    music.play().catch(() => {});
+    celebrate(e.clientX, e.clientY);
+    document.getElementById("page1").classList.add("hidden");
+    document.getElementById("page2").classList.remove("hidden");
+    loadStory();
 }
 
 function nextStory(e) {
-  celebrate(e.clientX, e.clientY);
-  if (index < stories.length - 1) {
-    index++;
-    loadStory();
-  } else {
-    // Final Celebration
-    setInterval(() => celebrate(Math.random()*window.innerWidth, Math.random()*window.innerHeight), 500);
-    alert("HAPPY BIRTHDAY Hope your day is as wonderful as you are 🎂🎈✨");
-  }
+    celebrate(e.clientX, e.clientY);
+    if (index < config.stories.length - 1) {
+        index++;
+        loadStory();
+    } else {
+        alert("Happy Birthday! 🎈✨");
+    }
 }
 
 function prevStory() { if (index > 0) { index--; loadStory(); } }
 
 function moveNo() {
-  const noBtn = document.getElementById("noBtn");
-  noBtn.style.position = "fixed";
-  noBtn.style.left = Math.random() * (window.innerWidth - 120) + "px";
-  noBtn.style.top = Math.random() * (window.innerHeight - 60) + "px";
+    const noBtn = document.getElementById("noBtn");
+    noBtn.style.position = "fixed";
+    noBtn.style.transition = "all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)";
+    const x = Math.random() * (window.innerWidth - 120);
+    const y = Math.random() * (window.innerHeight - 60);
+    noBtn.style.left = `${x}px`;
+    noBtn.style.top = `${y}px`;
 }
 
-// BIRTHDAY CONFETTI LOGIC
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-let particles = [];
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
-class ConfettiParticle {
-  constructor(x, y) {
-    this.x = x; this.y = y;
-    this.size = Math.random() * 8 + 4;
-    this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
-    this.speedX = (Math.random() - 0.5) * 10;
-    this.speedY = (Math.random() - 0.5) * 15 - 5;
-    this.gravity = 0.2;
-    this.alpha = 1;
-    this.rotation = Math.random() * 360;
-  }
-  draw() {
-    ctx.save();
-    ctx.globalAlpha = this.alpha;
-    ctx.translate(this.x, this.y);
-    ctx.rotate(this.rotation * Math.PI / 180);
-    ctx.fillStyle = this.color;
-    ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
-    ctx.restore();
-  }
-  update() {
-    this.x += this.speedX;
-    this.y += this.speedY;
-    this.speedY += this.gravity;
-    this.alpha -= 0.01;
-    this.rotation += 5;
-  }
-}
+// Optimized Confetti
+const confCanvas = document.getElementById("confetti-canvas");
+const confCtx = confCanvas.getContext("2d");
+let confParticles = [];
 
 function celebrate(x, y) {
-  for (let i = 0; i < 50; i++) particles.push(new ConfettiParticle(x, y));
+    for (let i = 0; i < 35; i++) {
+        confParticles.push({
+            x, y,
+            size: Math.random() * 6 + 2,
+            color: `hsl(${Math.random() * 360}, 100%, 70%)`,
+            vx: (Math.random() - 0.5) * 12,
+            vy: (Math.random() - 0.5) * 12,
+            alpha: 1
+        });
+    }
 }
 
 function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach((p, i) => {
-    p.update(); p.draw();
-    if (p.alpha <= 0) particles.splice(i, 1);
-  });
-  requestAnimationFrame(animate);
+    bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+    confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
+    bgParticles.forEach(p => { p.update(); p.draw(); });
+    confParticles.forEach((p, i) => {
+        p.x += p.vx; p.y += p.vy; p.vy += 0.1;
+        p.alpha -= 0.015;
+        confCtx.globalAlpha = p.alpha;
+        confCtx.fillStyle = p.color;
+        confCtx.beginPath();
+        confCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        confCtx.fill();
+        if (p.alpha <= 0) confParticles.splice(i, 1);
+    });
+    requestAnimationFrame(animate);
 }
-animate();
 
-window.onresize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+window.addEventListener('resize', () => {
+    bgCanvas.width = confCanvas.width = window.innerWidth;
+    bgCanvas.height = confCanvas.height = window.innerHeight;
+});
+
+bgCanvas.width = confCanvas.width = window.innerWidth;
+bgCanvas.height = confCanvas.height = window.innerHeight;
+initBg("✨");
+animate();
 </script>
 </body>
 </html>
-
-
