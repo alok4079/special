@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday 🎂</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playwrite+IT+Moderna:wght@300&family=Indie+Flower&family=Caveat:wght@700&family=Dancing+Script:wght@600&family=Cherry+Bomb+One&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --accent: #ffcc00; /* Birthday Gold */
+  --primary: #0077ff; /* Celebration Blue */
+  --bg-gradient: linear-gradient(135deg, #00c6ff, #0072ff);
+}
+
+body {
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-gradient);
+  font-family: 'Poppins', sans-serif;
+}
+
+#canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.container, .storyboard {
+  position: relative;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 25px;
+  border-radius: 25px;
+  text-align: center;
+  width: 340px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  z-index: 10;
+  border: 4px solid var(--accent);
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+h2 { font-size: 22px; color: #333; margin-bottom: 20px; }
+
+.story-img {
+  width: 100%;
+  height: 230px;
+  object-fit: cover;
+  border-radius: 15px;
+  border: 2px solid #eee;
+  margin-bottom: 12px;
+}
+
+.story-text {
+  margin-bottom: 15px;
+  font-size: 16px;
+  color: #444;
+  min-height: 100px;
+  max-height: 160px;
+  overflow-y: auto;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.nav-btns { display: flex; gap: 10px; }
+
+.nav-btns button, #yesBtn, #noBtn {
+  flex: 1;
+  padding: 12px 0;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  transition: transform 0.2s;
+}
+
+#yesBtn, .nav-btns button {
+  background: var(--primary);
+  color: white;
+}
+
+#yesBtn:hover, .nav-btns button:hover {
+  transform: translateY(-3px);
+  filter: brightness(1.1);
+}
+
+#noBtn {
+  background: #ff4d4d;
+  color: #fff;
+  position: relative;
+  z-index: 999;
+}
+
+.hidden { display: none !important; }
+
+/* Custom Scrollbar */
+.story-text::-webkit-scrollbar { width: 5px; }
+.story-text::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+<audio id="audioPlayer"></audio>
+
+<div class="container" id="page1">
+  <h2>🎉 Hey Birthday Dear🎈<br>Ready to see your highlights birthday moments? ✨</h2>
+  <div style="display:flex; justify-content:center; gap:15px; width: 100%;">
+    <button id="yesBtn" onclick="openStory(event)">LETS GO 🎂</button>
+    <button id="noBtn" onmouseover="moveNo()">Nahhh</button>
+  </div>
+</div>
+
+<div class="storyboard hidden" id="page2">
+  <img id="storyImg" class="story-img" src="">
+  <div class="story-text" id="storyText"></div>
+  <div class="nav-btns">
+    <button id="prevBtn" onclick="prevStory()">⬅ Back</button>
+    <button id="nextBtn" onclick="nextStory(event)">Next ➡</button>
+  </div>
+</div>
+
+<script>
+const stories = [
+  { 
+    img: "IMAGE_URL_1", 
+    song: "SONG_URL_1", 
+    font: "'Playwrite IT Moderna', cursive", 
+    text: "HAPPIEST BIRTHDAY 🎂✨\nToday is all about YOU. Let's take a quick trip down memory lane... starting with this classic 📸" 
+  },
+  { 
+    img: "IMAGE_URL_2", 
+    song: "SONG_URL_2", 
+    font: "'Indie Flower', cursive", 
+    text: "Remember this day? 😂\nYou were looking so good, even though we were being totally chaotic. Never change 🥳" 
+  },
+  { 
+    img: "IMAGE_URL_3", 
+    song: "SONG_URL_3", 
+    font: "'Caveat', cursive", 
+    text: "Another year older, another year of being the most amazing person I know. 🌟\nKeep shining brighter than these candles 🕯️" 
+  },
+  { 
+    img: "IMAGE_URL_4", 
+    song: "SONG_URL_4", 
+    font: "'Cherry Bomb One', cursive", 
+    text: "My favorite photo of us. 💖\nI'm so lucky to celebrate another birthday by your side 🥂" 
+  }
+];
+
+let index = 0;
+const audio = document.getElementById("audioPlayer");
+
+function openStory(e) {
+  for(let i=0; i<3; i++) setTimeout(() => celebrate(e.clientX, e.clientY), i*300);
+  document.getElementById("page1").classList.add("hidden");
+  document.getElementById("page2").classList.remove("hidden");
+  loadStory();
+}
+
+function loadStory() {
+  const storyImg = document.getElementById("storyImg");
+  const storyText = document.getElementById("storyText");
+  storyImg.src = stories[index].img;
+  storyText.innerText = stories[index].text;
+  storyText.style.fontFamily = stories[index].font;
+  audio.src = stories[index].song;
+  audio.play().catch(() => {});
+  
+  document.getElementById("prevBtn").style.visibility = index === 0 ? "hidden" : "visible";
+  document.getElementById("nextBtn").innerText = index === stories.length - 1 ? "Celebrate! 🎉" : "Next ➡";
+}
+
+function nextStory(e) {
+  celebrate(e.clientX, e.clientY);
+  if (index < stories.length - 1) {
+    index++;
+    loadStory();
+  } else {
+    // Final Celebration
+    setInterval(() => celebrate(Math.random()*window.innerWidth, Math.random()*window.innerHeight), 500);
+    alert("HAPPY BIRTHDAY Hope your day is as wonderful as you are 🎂🎈✨");
+  }
+}
+
+function prevStory() { if (index > 0) { index--; loadStory(); } }
+
+function moveNo() {
+  const noBtn = document.getElementById("noBtn");
+  noBtn.style.position = "fixed";
+  noBtn.style.left = Math.random() * (window.innerWidth - 120) + "px";
+  noBtn.style.top = Math.random() * (window.innerHeight - 60) + "px";
+}
+
+// BIRTHDAY CONFETTI LOGIC
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+let particles = [];
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+class ConfettiParticle {
+  constructor(x, y) {
+    this.x = x; this.y = y;
+    this.size = Math.random() * 8 + 4;
+    this.color = `hsl(${Math.random() * 360}, 100%, 50%)`;
+    this.speedX = (Math.random() - 0.5) * 10;
+    this.speedY = (Math.random() - 0.5) * 15 - 5;
+    this.gravity = 0.2;
+    this.alpha = 1;
+    this.rotation = Math.random() * 360;
+  }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rotation * Math.PI / 180);
+    ctx.fillStyle = this.color;
+    ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
+    ctx.restore();
+  }
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    this.speedY += this.gravity;
+    this.alpha -= 0.01;
+    this.rotation += 5;
+  }
+}
+
+function celebrate(x, y) {
+  for (let i = 0; i < 50; i++) particles.push(new ConfettiParticle(x, y));
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach((p, i) => {
+    p.update(); p.draw();
+    if (p.alpha <= 0) particles.splice(i, 1);
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
+window.onresize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+</script>
+</body>
+</html>
